@@ -14,20 +14,35 @@ class LLCGateway extends React.Component {
     static WITHDRAW = "withdraw";
     static DEPOSIT = "deposit";
 
+    static GATEWAY = "0";
+    static BRIDGE = "1";
+
     constructor(props) {
         super(props);
 
         this.switchToDeposit = this.switchToDeposit.bind(this);
         this.switchToWithdraw = this.switchToWithdraw.bind(this);
 
+        this.switchToGateway = this.switchToGateway.bind(this);
+        this.switchToBridge = this.switchToBridge.bind(this);
+
         this.state = {
             type: LLCGateway.WITHDRAW,
+            mode: LLCGateway.GATEWAY,
             currency: {
                 asset: null,
                 currency: null
             },
             depositAddress: ""
         };
+    }
+
+    switchToGateway() {
+        this.setState({mode: LLCGateway.GATEWAY});
+    }
+
+    switchToBridge() {
+        this.setState({mode: LLCGateway.BRIDGE});
     }
 
     switchToDeposit() {
@@ -46,14 +61,19 @@ class LLCGateway extends React.Component {
         this.createDepositAddress(this.props.account.get("name"), model.asset);
     }
 
-    createDepositAddress(account, asset) {
+    createDepositAddress(account, asset, mode) {
         if (!account || !asset) return;
 
-        new LLCGatewayData().сreatePaymentAddress(account, asset, address => {
-            this.setState({
-                depositAddress: address
-            });
-        });
+        new LLCGatewayData().сreatePaymentAddress(
+            account,
+            asset,
+            mode,
+            address => {
+                this.setState({
+                    depositAddress: address
+                });
+            }
+        );
     }
 
     render() {
@@ -68,11 +88,34 @@ class LLCGateway extends React.Component {
                         style={{marginBottom: "2rem"}}
                     >
                         <ul className="button-group segmented no-margin">
-                            <li className="is-active">
+                            <li
+                                className={
+                                    this.state.mode == LLCGateway.GATEWAY
+                                        ? "is-active"
+                                        : ""
+                                }
+                                onClick={this.switchToGateway}
+                            >
                                 <a>
                                     <span>
                                         {counterpart.translate(
                                             "gateway.gateway"
+                                        )}
+                                    </span>
+                                </a>
+                            </li>
+                            <li
+                                className={
+                                    this.state.mode == LLCGateway.BRIDGE
+                                        ? "is-active"
+                                        : ""
+                                }
+                                onClick={this.switchToBridge}
+                            >
+                                <a>
+                                    <span>
+                                        {counterpart.translate(
+                                            "gateway.bridge"
                                         )}
                                     </span>
                                 </a>
@@ -94,7 +137,8 @@ class LLCGateway extends React.Component {
                                         {counterpart.translate(
                                             "gateway.gateway_text"
                                         )}
-                                    </span>:
+                                    </span>
+                                    :
                                 </label>
                                 <div>
                                     <ul className="button-group segmented no-margin">

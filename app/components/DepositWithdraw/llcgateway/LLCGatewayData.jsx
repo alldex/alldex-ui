@@ -12,7 +12,7 @@ class LLCGatewayData {
         this.ajax(cb, "GetAllowCurrency");
     }
 
-    сreatePaymentAddress(account, asset, cb) {
+    сreatePaymentAddress(account, asset, mode, cb) {
         this.ajax(
             function(data) {
                 cb(data.address);
@@ -20,7 +20,8 @@ class LLCGatewayData {
             "CreatePaymentAddress",
             {
                 account: account,
-                asset: asset
+                asset: asset,
+                type: mode
             }
         );
     }
