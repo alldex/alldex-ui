@@ -39,10 +39,26 @@ class LLCGateway extends React.Component {
 
     switchToGateway() {
         this.setState({mode: LLCGateway.GATEWAY});
+
+        if (this.state.currency !== null) {
+            this.createDepositAddress(
+                this.props.account.get("name"),
+                this.state.currency.asset,
+                this.state.mode
+            );
+        }
     }
 
     switchToBridge() {
         this.setState({mode: LLCGateway.BRIDGE});
+
+        if (this.state.currency !== null) {
+            this.createDepositAddress(
+                this.props.account.get("name"),
+                this.state.currency.asset,
+                this.state.mode
+            );
+        }
     }
 
     switchToDeposit() {
@@ -58,7 +74,11 @@ class LLCGateway extends React.Component {
             currency: model
         });
 
-        this.createDepositAddress(this.props.account.get("name"), model.asset);
+        this.createDepositAddress(
+            this.props.account.get("name"),
+            model.asset,
+            this.state.mode
+        );
     }
 
     createDepositAddress(account, asset, mode) {
